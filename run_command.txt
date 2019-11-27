@@ -1,0 +1,4 @@
+run visual_mpc_rospkg visual_mpc_server.py dna_multobj
+
+rosrun visual_mpc_rospkg visual_mpc_server.py dna_test
+

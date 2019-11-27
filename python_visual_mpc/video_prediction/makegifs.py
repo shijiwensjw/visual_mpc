@@ -1,7 +1,7 @@
 import cPickle
 import numpy
 
-from python_visual_mpc.video_prediction.utils_vpred.create_gif_lib import *
+from utils_vpred.create_gif_lib import *
 from PIL import Image
 
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import os
-import shutil
-import socket
-import thread
+# import shutil
+# import socket
+# import thread
 import numpy as np
 import pdb
 from PIL import Image
@@ -10,11 +10,18 @@ import cPickle
 import imp
 import argparse
 
-from python_visual_mpc.video_prediction.utils_vpred.create_gif_lib import *
-from python_visual_mpc.visual_mpc_core.algorithm.cem_controller_goalimage_sawyer import CEM_controller
+import sys
+sys.path.append('/home/steven/Project/graduate_design/visual_mpc/python_visual_mpc/video_prediction/')
+from utils_vpred.create_gif_lib import *
+# from create_gif_lib import *
+# from python_visual_mpc.visual_mpc_core.algorithm.cem_controller_goalimage_sawyer import CEM_controller
+from cem_controller_goalimage_sawyer import CEM_controller
 
-from python_visual_mpc.visual_mpc_core.infrastructure.trajectory import Trajectory
-from python_visual_mpc import __file__ as base_filepath
+# from python_visual_mpc.visual_mpc_core.infrastructure.trajectory import Trajectory
+from trajectory import Trajectory
+
+# from python_visual_mpc import __file__ as base_filepath
+base_filepath = '/home/steven/Project/graduate_design/visual_mpc/python_visual_mpc/'
 
 
 import rospy
@@ -23,6 +30,7 @@ from visual_mpc_rospkg.srv import *
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image as Image_msg
+# from setup_predictor_simple import setup_predictor
 
 class Visual_MPC_Server(object):
     def __init__(self):
@@ -71,8 +79,10 @@ class Visual_MPC_Server(object):
             self.agentparams.update(bench_conf.agent)
         print '-------------------------------------------------------------------'
         print 'verify planner settings!! '
+        print("\npolicy params:")
         for key in self.policyparams.keys():
             print key, ': ', self.policyparams[key]
+        print("\nagent params:")
         for key in self.agentparams.keys():
             print key, ': ', self.agentparams[key]
         print '-------------------------------------------------------------------'

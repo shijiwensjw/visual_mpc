@@ -1,7 +1,7 @@
 import tensorflow as tf
 import imp
 import numpy as np
-from python_visual_mpc.video_prediction.prediction_train_sawyer import Model
+from prediction_train_sawyer import Model
 from PIL import Image
 import os
 

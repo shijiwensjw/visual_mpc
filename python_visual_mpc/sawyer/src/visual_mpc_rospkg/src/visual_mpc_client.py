@@ -5,7 +5,7 @@ import pdb
 import rospy
 import matplotlib.pyplot as plt
 
-import socket
+# import socket
 
 from intera_core_msgs.srv import (
     SolvePositionFK,
@@ -14,7 +14,7 @@ from intera_core_msgs.srv import (
 import intera_external_devices
 
 import argparse
-import imutils
+# import imutils
 from sensor_msgs.msg import JointState
 from std_msgs.msg import String
 

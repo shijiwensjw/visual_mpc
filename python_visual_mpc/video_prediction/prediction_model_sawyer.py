@@ -20,8 +20,8 @@ import tensorflow as tf
 
 import tensorflow.contrib.slim as slim
 from tensorflow.contrib.layers.python import layers as tf_layers
-from python_visual_mpc.video_prediction.lstm_ops12 import basic_conv_lstm_cell
-from python_visual_mpc.misc.zip_equal import zip_equal
+from lstm_ops12 import basic_conv_lstm_cell
+from zip_equal import zip_equal
 
 import pdb
 
