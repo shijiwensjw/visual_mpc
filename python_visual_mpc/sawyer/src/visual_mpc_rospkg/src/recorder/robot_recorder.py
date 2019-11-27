@@ -11,7 +11,7 @@ import thread
 import numpy as np
 import imutils
 import pdb
-from berkeley_sawyer.srv import *
+# from berkeley_sawyer.srv import *
 from PIL import Image
 import cPickle
 import imageio

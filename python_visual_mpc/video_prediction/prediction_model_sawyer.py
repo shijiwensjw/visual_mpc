@@ -127,7 +127,7 @@ class Prediction_Model(object):
         t = -1
         for image, action in zip(self.images[:-1], self.actions[:-1]):
             t +=1
-            print t
+            print 't: ', t
             # Reuse variables after the first timestep.
             reuse = bool(self.gen_images)
 
