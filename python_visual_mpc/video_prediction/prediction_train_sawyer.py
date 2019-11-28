@@ -289,7 +289,7 @@ def main(unused_argv, conf_script= None):
 
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9)
     # Make training session.
-    sess = tf.InteractiveSession(config= tf.ConfigProto(gpu_options=gpu_options))
+    sess = tf.InteractiveSession(config= tf.ConfigProto(gpu_options=gpu_options), allow_soft_placement=True)
     summary_writer = tf.summary.FileWriter(conf['output_dir'], graph=sess.graph, flush_secs=10)
 
     tf.train.start_queue_runners(sess)

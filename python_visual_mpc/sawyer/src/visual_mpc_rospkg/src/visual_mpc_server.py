@@ -100,7 +100,7 @@ class Visual_MPC_Server(object):
         ###########
         self.t = 0
         self.traj = Trajectory(self.agentparams, self.netconf)
-
+        
         if self.use_robot:
             self.bridge = CvBridge()
 

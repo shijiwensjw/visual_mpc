@@ -21,7 +21,7 @@ def setup_predictor(conf, gpu_id = 0, ngpu=None):
 
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
     g_predictor = tf.Graph()
-    sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options), graph= g_predictor)
+    sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, allow_soft_placement=True), graph= g_predictor)
     with sess.as_default():
         with g_predictor.as_default():
 
@@ -63,8 +63,10 @@ def setup_predictor(conf, gpu_id = 0, ngpu=None):
             sess.run(tf.global_variables_initializer())
 
             vars_without_state = filter_vars(tf.get_collection(tf.GraphKeys.VARIABLES))
-            saver = tf.train.Saver(vars_without_state, max_to_keep=0)
-            saver.restore(sess, conf['pretrained_model'])
+            # saver = tf.train.Saver(vars_without_state, max_to_keep=0)
+            print('conf pretrained_model: ', conf['pretrained_model'])
+            saver = tf.train.import_meta_graph(conf['pretrained_model']+'.meta')
+            # saver.restore(sess, conf['pretrained_model'])
 
 
             def predictor_func(input_images=None, input_one_hot_images1=None,

@@ -6,12 +6,12 @@ from cv_bridge import CvBridge, CvBridgeError
 import os
 import shutil
 import copy
-import socket
+# import socket
 import thread
 import numpy as np
 import imutils
 import pdb
-# from berkeley_sawyer.srv import *
+from visual_mpc_rospkg.srv import *
 from PIL import Image
 import cPickle
 import imageio
@@ -87,8 +87,8 @@ class RobotRecorder(object):
 
         prefix = self.instance_type
 
-        rospy.Subscriber(prefix + "/kinect2/hd/image_color", Image_msg, self.store_latest_im)
-        rospy.Subscriber(prefix + "/kinect2/sd/image_depth_rect", Image_msg, self.store_latest_d_im)
+        rospy.Subscriber(prefix + "/camera/color/image_raw", Image_msg, self.store_latest_im)
+        rospy.Subscriber(prefix + "/camera/depth/image_rect_raw", Image_msg, self.store_latest_d_im)
 
         self.save_dir = save_dir
         self.ltob = Latest_observation()

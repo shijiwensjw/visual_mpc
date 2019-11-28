@@ -154,7 +154,10 @@ class Prediction_Model(object):
                     if self.pix_distributions1 != None:
                         prev_pix_distrib1 = self.pix_distributions1[t]
                         if 'ndesig' in self.conf:
+                            # debug point
+                            # prev_pix_distrib2 = 0
                             prev_pix_distrib2 = self.pix_distributions2[t]
+
                         if len(prev_pix_distrib1.get_shape()) == 3:
                             prev_pix_distrib1 = tf.expand_dims(prev_pix_distrib1, -1)
                             if 'ndesig' in self.conf:

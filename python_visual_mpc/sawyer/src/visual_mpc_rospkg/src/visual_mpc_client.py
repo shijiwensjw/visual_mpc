@@ -30,7 +30,8 @@ import cPickle
 from std_msgs.msg import Float32
 from std_msgs.msg import Int64
 
-from berkeley_sawyer.srv import *
+# from berkeley_sawyer.srv import *
+from visual_mpc_rospkg.srv import *
 import copy
 import imp
 
@@ -45,7 +46,8 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-from python_visual_mpc import __file__ as base_filepath
+# from python_visual_mpc import __file__ as base_filepath
+base_filepath = '/home/steven/Project/graduate_design/visual_mpc/python_visual_mpc/'
 
 class Visual_MPC_Client():
     def __init__(self):
@@ -97,7 +99,7 @@ class Visual_MPC_Client():
         self.use_aux = False
         if self.use_robot:
             self.ctrl = robot_controller.RobotController()
-
+        print('test point')
         self.get_action_func = rospy.ServiceProxy('get_action', get_action)
         self.init_traj_visual_func = rospy.ServiceProxy('init_traj_visualmpc', init_traj_visualmpc)
 
@@ -122,7 +124,7 @@ class Visual_MPC_Client():
         # drive to neutral position:
         self.imp_ctrl_active.publish(0)
         self.ctrl.set_neutral()
-        self.set_neutral_with_impedance()
+        # self.set_neutral_with_impedance()
         self.imp_ctrl_active.publish(1)
         rospy.sleep(.2)
 
@@ -220,25 +222,27 @@ class Visual_MPC_Client():
         :return:
         """
 
-        fkreq = SolvePositionFKRequest()
-        joints = JointState()
-        joints.name = self.ctrl.limb.joint_names()
-        joints.position = [self.ctrl.limb.joint_angle(j)
-                        for j in joints.name]
+        # fkreq = SolvePositionFKRequest()
+        # joints = JointState()
+        # joints.name = self.ctrl.limb.joint_names()
+        # joints.position = [self.ctrl.limb.joint_angle(j)
+        #                 for j in joints.name]
 
         # Add desired pose for forward kinematics
-        fkreq.configuration.append(joints)
-        fkreq.tip_names.append('right_hand')
-        try:
-            rospy.wait_for_service(self.name_of_service, 5)
-            resp = self.fksvc(fkreq)
-        except (rospy.ServiceException, rospy.ROSException), e:
-            rospy.logerr("Service call failed: %s" % (e,))
-            return False
-
-        pos = np.array([resp.pose_stamp[0].pose.position.x,
-                         resp.pose_stamp[0].pose.position.y,
-                         resp.pose_stamp[0].pose.position.z])
+        # fkreq.configuration.append(joints)
+        # fkreq.tip_names.append('right_hand')
+        # try:
+        #     rospy.wait_for_service(self.name_of_service, 5)
+        #     resp = self.fksvc(fkreq)
+        # except (rospy.ServiceException, rospy.ROSException), e:
+        #     rospy.logerr("Service call failed: %s" % (e,))
+        #     return False
+        #
+        # pos = np.array([resp.pose_stamp[0].pose.position.x,
+        #                  resp.pose_stamp[0].pose.position.y,
+        #                  resp.pose_stamp[0].pose.position.z])
+        #
+        pos = self.ctrl.get_pose()
         return pos
 
     def init_traj(self):
@@ -269,13 +273,13 @@ class Visual_MPC_Client():
             # drive to neutral position:
             self.imp_ctrl_active.publish(0)
             self.ctrl.set_neutral()
-            self.set_neutral_with_impedance()
+            # self.set_neutral_with_impedance()
             self.imp_ctrl_active.publish(1)
             rospy.sleep(.2)
 
-            self.ctrl.gripper.open()
-            self.gripper_closed = False
-            self.gripper_up = False
+            # self.ctrl.gripper.open()
+            # self.gripper_closed = False
+            # self.gripper_up = False
 
             if self.args.save_subdir == "True":
                 self.save_subdir = raw_input('enter subdir to save data:')
@@ -308,8 +312,8 @@ class Visual_MPC_Client():
             self.init_traj()
 
             self.lower_height = 0.20
-            self.xlim = [0.44, 0.83]  # min, max in cartesian X-direction
-            self.ylim = [-0.27, 0.18]  # min, max in cartesian Y-direction
+            self.xlim = [-0.35, 0.23]  # min, max in cartesian X-direction
+            self.ylim = [0.36, 0.92]  # min, max in cartesian Y-direction
 
             random_start_pos = False
             if random_start_pos:
@@ -334,7 +338,7 @@ class Visual_MPC_Client():
 
         i_step = 0  # index of current commanded point
 
-        self.ctrl.limb.set_joint_position_speed(.20)
+        # self.ctrl.limb.set_joint_position_speed(.20)
         self.previous_des_pos = copy.deepcopy(self.des_pos)
         start_time = -1
 
