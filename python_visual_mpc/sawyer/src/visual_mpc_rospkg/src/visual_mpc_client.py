@@ -95,10 +95,13 @@ class Visual_MPC_Client():
         self.robot_move = True
 
         self.save_subdir = ""
-
+        print('test point 1')
         self.use_aux = False
-        if self.use_robot:
-            self.ctrl = robot_controller.RobotController()
+        # if self.use_robot:
+        #     self.ctrl = robot_controller.RobotController()
+        # temp test for debug
+        rospy.init_node("ur5_custom_controller")
+
         print('test point')
         self.get_action_func = rospy.ServiceProxy('get_action', get_action)
         self.init_traj_visual_func = rospy.ServiceProxy('init_traj_visualmpc', init_traj_visualmpc)
@@ -108,7 +111,7 @@ class Visual_MPC_Client():
             self.imp_ctrl_release_spring_pub = rospy.Publisher('release_spring', Float32, queue_size=10)
             self.imp_ctrl_active = rospy.Publisher('imp_ctrl_active', Int64, queue_size=10)
             self.name_of_service = "ExternalTools/right/PositionKinematicsNode/FKService"
-            self.fksvc = rospy.ServiceProxy(self.name_of_service, SolvePositionFK)
+            # self.fksvc = rospy.ServiceProxy(self.name_of_service, SolvePositionFK)
 
         self.use_imp_ctrl = True
         self.interpolate = True
@@ -123,7 +126,7 @@ class Visual_MPC_Client():
         rospy.sleep(.2)
         # drive to neutral position:
         self.imp_ctrl_active.publish(0)
-        self.ctrl.set_neutral()
+        # self.ctrl.set_neutral()
         # self.set_neutral_with_impedance()
         self.imp_ctrl_active.publish(1)
         rospy.sleep(.2)
@@ -272,7 +275,7 @@ class Visual_MPC_Client():
             rospy.sleep(.2)
             # drive to neutral position:
             self.imp_ctrl_active.publish(0)
-            self.ctrl.set_neutral()
+            # self.ctrl.set_neutral()
             # self.set_neutral_with_impedance()
             self.imp_ctrl_active.publish(1)
             rospy.sleep(.2)
@@ -301,8 +304,9 @@ class Visual_MPC_Client():
                                                          save_images=False
                                                          )
 
-            print 'place object in new location!'
-            pdb.set_trace()
+            print 'Place object in new location! Press enter to continue.'
+            # pdb.set_trace()
+            raw_input()
             # rospy.sleep(.3)
             if self.use_goalimage:
                 self.collect_goal_image(i_tr)
@@ -318,8 +322,10 @@ class Visual_MPC_Client():
             random_start_pos = False
             if random_start_pos:
                 startpos = np.array([np.random.uniform(self.xlim[0], self.xlim[1]), np.random.uniform(self.ylim[0], self.ylim[1])])
-            else: startpos = self.get_endeffector_pos()[:2]
-
+            else:
+                startpos = self.get_endeffector_pos()[:2]
+                # print('sjw test: need get_endeffector_pos')
+                # startpos = [1,1]
             self.des_pos = np.concatenate([startpos, np.asarray([self.lower_height])], axis=0)
 
             self.topen, self.t_down = 0, 0
@@ -712,7 +718,7 @@ class Getdesig(object):
 
         if self.i_click == self.i_click_max:
             print 'saving desig-goal picture'
-            plt.savefig(self.basedir +'/startimg_'+self.suf)
+            plt.savefig(self.basedir +'/startimg'+self.suf)
             if self.canon_ind != None:
                 print 'saving canonical example image to' + self.canon_dir + '/images/img{}'.format(self.canon_ind)
                 plt.savefig(self.canon_dir + '/images/img{}'.format(self.canon_ind))

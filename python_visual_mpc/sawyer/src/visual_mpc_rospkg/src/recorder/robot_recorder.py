@@ -83,13 +83,14 @@ class RobotRecorder(object):
             rospy.loginfo("init node aux_recorder1")
             self.instance_type = 'aux1'
 
-        print 'init recorder with instance type', self.instance_type
+        print 'Init recorder with instance type', self.instance_type
 
-        prefix = self.instance_type
-
-        rospy.Subscriber(prefix + "/camera/color/image_raw", Image_msg, self.store_latest_im)
-        rospy.Subscriber(prefix + "/camera/depth/image_rect_raw", Image_msg, self.store_latest_d_im)
-
+        # prefix = self.instance_type
+        try:
+            rospy.Subscriber("/camera/color/image_raw", Image_msg, self.store_latest_im)
+            rospy.Subscriber("/camera/depth/image_rect_raw", Image_msg, self.store_latest_d_im)
+        except:
+            print('Can not subscribe image topics')
         self.save_dir = save_dir
         self.ltob = Latest_observation()
         self.ltob_aux1 = Latest_observation()
@@ -114,10 +115,10 @@ class RobotRecorder(object):
 
         elif self.instance_type == 'main':
             # initializing the client:
-            self.get_kinectdata_func = rospy.ServiceProxy('get_kinectdata', get_kinectdata)
-            self.save_kinectdata_func = rospy.ServiceProxy('save_kinectdata', save_kinectdata)
-            self.init_traj_func = rospy.ServiceProxy('init_traj', init_traj)
-            self.delete_traj_func = rospy.ServiceProxy('delete_traj', delete_traj)
+            # self.get_kinectdata_func = rospy.ServiceProxy('get_kinectdata', get_kinectdata)
+            # self.save_kinectdata_func = rospy.ServiceProxy('save_kinectdata', save_kinectdata)
+            # self.init_traj_func = rospy.ServiceProxy('init_traj', init_traj)
+            # self.delete_traj_func = rospy.ServiceProxy('delete_traj', delete_traj)
 
             def spin_thread():
                 rospy.spin()
@@ -207,20 +208,22 @@ class RobotRecorder(object):
     def crop_lowres(self, cv_image):
         self.ltob.d_img_raw_npy = np.asarray(cv_image)
         if self.instance_type == 'main':
-            img = cv2.resize(cv_image, (0, 0), fx=1 / 16., fy=1 / 16., interpolation=cv2.INTER_AREA)
-            startrow = 3
-            startcol = 27
-
+            # img = cv2.resize(cv_image, (0, 0), fx=1 / 16., fy=1 / 16., interpolation=cv2.INTER_AREA)
+            # startrow = 3
+            # startcol = 27
+            img = cv2.resize(cv_image, (64,64), interpolation=cv2.INTER_AREA)
+            # cv2.imwrite('/home/steven/test/test.jpg', img)
             img = imutils.rotate_bound(img, 180)
         else:
             img = cv2.resize(cv_image, (0, 0), fx=1 / 15., fy=1 / 15., interpolation=cv2.INTER_AREA)
             startrow = 2
             startcol = 27
-        endcol = startcol + 64
-        endrow = startrow + 64
+        # endcol = startcol + 64
+        # endrow = startrow + 64
 
         # crop image:
-        img = img[startrow:endrow, startcol:endcol]
+        # img = img[startrow:endrow, startcol:endcol]
+        # cv2.imwrite('/home/steven/test/test_retate.jpg', img)
         assert img.shape == (64,64,3)
         return img
 

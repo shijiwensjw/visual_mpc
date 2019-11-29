@@ -66,7 +66,7 @@ def setup_predictor(conf, gpu_id = 0, ngpu=None):
             # saver = tf.train.Saver(vars_without_state, max_to_keep=0)
             print('conf pretrained_model: ', conf['pretrained_model'])
             saver = tf.train.import_meta_graph(conf['pretrained_model']+'.meta')
-            # saver.restore(sess, conf['pretrained_model'])
+            saver.restore(sess, conf['pretrained_model'])
 
 
             def predictor_func(input_images=None, input_one_hot_images1=None,
