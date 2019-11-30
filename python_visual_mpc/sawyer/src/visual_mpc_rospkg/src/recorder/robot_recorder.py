@@ -75,8 +75,8 @@ class RobotRecorder(object):
             self.instance_type = 'main'
             self._gripper = None
             self.gripper_name = '_'.join([side, 'gripper'])
-            import intera_interface
-            self._limb_right = intera_interface.Limb(side)
+            # import intera_interface
+            # self._limb_right = intera_interface.Limb(side)
         else:
             # auxiliary recorder
             rospy.init_node('aux_recorder1')

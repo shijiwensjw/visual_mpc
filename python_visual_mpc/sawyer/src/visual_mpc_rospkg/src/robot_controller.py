@@ -4,9 +4,9 @@ import argparse
 import rospy
 import sys
 # import socket
-import intera_interface
-import intera_external_devices
-from intera_interface import CHECK_VERSION
+# import intera_interface
+# import intera_external_devices
+# from intera_interface import CHECK_VERSION
 
 import numpy as np
 import pdb
@@ -60,7 +60,7 @@ class RobotController(object):
         self._low_bound = np.array([-0.35, 0.360, 0.118, -1])
         self._high_bound = np.array([0.23, 0.920, 0.125, 1])
 
-        group.set_max_velocity_scaling_factor(0.18)
+        group.set_max_velocity_scaling_factor(0.1)
         group.set_max_acceleration_scaling_factor(0.08)
         # self.limb = intera_interface.Limb("right")
 
@@ -138,21 +138,53 @@ class RobotController(object):
     #         done = True
 
         # self.limb.move_to_neutral()
+    def go_to_pose_goal(self, goal_pose):
+
+        group = self.group
+
+        pose_goal = geometry_msgs.msg.Pose()
+
+        pose_goal.orientation.w = 0.535960768954  #1.0
+        pose_goal.orientation.x = -0.415964133446
+        pose_goal.orientation.y = 0.352373748554
+        pose_goal.orientation.z = 0.644633721705
+
+        pose_goal.position.x = goal_pose[0]
+        pose_goal.position.y = goal_pose[1]
+        pose_goal.position.z = goal_pose[2]
+
+
+        group.set_pose_target(pose_goal)
+        #group.set_random_target()
+
+        plan = group.go(wait=True)
+
+        group.stop()
+
+        group.clear_pose_targets()
+
+        current_pose = group.get_current_pose().pose
+        print("New current pose: ", current_pose)
+
+        # current_pose = self.group.get_current_pose().pose
+        # return all_close(pose_goal, current_pose, 0.01)
+
+
     def set_neutral(self):
         pose_goal = geometry_msgs.msg.Pose()
 
         pose_goal.position.x = -0.35
         pose_goal.position.y = 0.360
-        pose_goal.position,z = 0.125
+        pose_goal.position.z = 0.125
         pose_goal.orientation.w = 0.535960768954  #1.0
         pose_goal.orientation.x = -0.415964133446
         pose_goal.orientation.y = 0.352373748554
         pose_goal.orientation.z = 0.644633721705
 
         self.group.set_pose_target(pose_goal)
-        plan = group.go(wait=True)
-        group.stop()
-        group.clear_pose_targets()
+        plan = self.group.go(wait=True)
+        self.group.stop()
+        self.group.clear_pose_targets()
 
     def get_pose(self):
         group = self.group

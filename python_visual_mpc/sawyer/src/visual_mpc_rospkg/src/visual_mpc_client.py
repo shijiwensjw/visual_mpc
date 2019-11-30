@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 
 # import socket
 
-from intera_core_msgs.srv import (
-    SolvePositionFK,
-    SolvePositionFKRequest,
-)
-import intera_external_devices
+# from intera_core_msgs.srv import (
+#     SolvePositionFK,
+#     SolvePositionFKRequest,
+# )
+# import intera_external_devices
 
 import argparse
 # import imutils
@@ -22,7 +22,7 @@ import cv2
 from cv_bridge import CvBridge, CvBridgeError
 
 from PIL import Image
-import inverse_kinematics
+# import inverse_kinematics
 import robot_controller
 from recorder import robot_recorder
 import os
@@ -95,14 +95,12 @@ class Visual_MPC_Client():
         self.robot_move = True
 
         self.save_subdir = ""
-        print('test point 1')
         self.use_aux = False
-        # if self.use_robot:
-        #     self.ctrl = robot_controller.RobotController()
+        if self.use_robot:
+            self.ctrl = robot_controller.RobotController()
         # temp test for debug
-        rospy.init_node("ur5_custom_controller")
+        # rospy.init_node("ur5_custom_controller")
 
-        print('test point')
         self.get_action_func = rospy.ServiceProxy('get_action', get_action)
         self.init_traj_visual_func = rospy.ServiceProxy('init_traj_visualmpc', init_traj_visualmpc)
 
@@ -126,7 +124,7 @@ class Visual_MPC_Client():
         rospy.sleep(.2)
         # drive to neutral position:
         self.imp_ctrl_active.publish(0)
-        # self.ctrl.set_neutral()
+        self.ctrl.set_neutral()
         # self.set_neutral_with_impedance()
         self.imp_ctrl_active.publish(1)
         rospy.sleep(.2)
@@ -146,7 +144,7 @@ class Visual_MPC_Client():
         imagemain = cv2.cvtColor(imagemain, cv2.COLOR_BGR2RGB)
         c_main = Getdesig(imagemain, self.desig_pix_img_dir, '_traj{}'.format(itr), self.ndesig, self.canon_ind, self.canon_dir)
         self.desig_pos_main = c_main.desig.astype(np.int64)
-        print 'desig pos aux1:', self.desig_pos_main
+        print 'desig pos main:', self.desig_pos_main
         self.goal_pos_main = c_main.goal.astype(np.int64)
         print 'goal pos main:', self.goal_pos_main
 
@@ -246,6 +244,7 @@ class Visual_MPC_Client():
         #                  resp.pose_stamp[0].pose.position.z])
         #
         pos = self.ctrl.get_pose()
+        pos = [pos.position.x, pos.position.y, pos.position.z]
         return pos
 
     def init_traj(self):
@@ -275,7 +274,7 @@ class Visual_MPC_Client():
             rospy.sleep(.2)
             # drive to neutral position:
             self.imp_ctrl_active.publish(0)
-            # self.ctrl.set_neutral()
+            self.ctrl.set_neutral()
             # self.set_neutral_with_impedance()
             self.imp_ctrl_active.publish(1)
             rospy.sleep(.2)
@@ -315,7 +314,7 @@ class Visual_MPC_Client():
 
             self.init_traj()
 
-            self.lower_height = 0.20
+            self.lower_height = 0.15
             self.xlim = [-0.35, 0.23]  # min, max in cartesian X-direction
             self.ylim = [0.36, 0.92]  # min, max in cartesian Y-direction
 
@@ -324,13 +323,12 @@ class Visual_MPC_Client():
                 startpos = np.array([np.random.uniform(self.xlim[0], self.xlim[1]), np.random.uniform(self.ylim[0], self.ylim[1])])
             else:
                 startpos = self.get_endeffector_pos()[:2]
-                # print('sjw test: need get_endeffector_pos')
-                # startpos = [1,1]
+
             self.des_pos = np.concatenate([startpos, np.asarray([self.lower_height])], axis=0)
 
             self.topen, self.t_down = 0, 0
 
-        #move to start:
+        # move to start:
         self.move_to_startpos(self.des_pos)
 
         if self.save_canon:
@@ -385,7 +383,7 @@ class Visual_MPC_Client():
 
                 print 'applying action{}'.format(i_step)
 
-            des_joint_angles = self.get_interpolated_joint_angles()
+            # des_joint_angles = self.get_interpolated_joint_angles()
 
             if self.save_active:
                 if isave_substep < len(tsave):
@@ -395,10 +393,11 @@ class Visual_MPC_Client():
                         self.recorder.save(isave, action_vec, self.get_endeffector_pos())
                         isave_substep += 1
                         isave += 1
-
+            '''
             try:
                 if self.robot_move:
-                    self.move_with_impedance(des_joint_angles)
+                    # self.move_with_impedance(des_joint_angles)
+                    ???? self.ctrl.go_to_pose_goal()
                         # print des_joint_angles
             except OSError:
                 rospy.logerr('collision detected, stopping trajectory, going to reset robot...')
@@ -408,7 +407,7 @@ class Visual_MPC_Client():
                 rospy.logerr('collision detected!!!')
                 rospy.sleep(.5)
                 raise Traj_aborted_except('raising Traj_aborted_except')
-
+            '''
             self.control_rate.sleep()
 
         self.save_final_image(i_tr)
@@ -515,84 +514,87 @@ class Visual_MPC_Client():
         self.move_with_impedance_sec(cmd)
 
     def move_to_startpos(self, pos):
-        desired_pose = inverse_kinematics.get_pose_stamped(pos[0],
-                                                           pos[1],
-                                                           pos[2],
-                                                           inverse_kinematics.EXAMPLE_O)
-        start_joints = self.ctrl.limb.joint_angles()
-        try:
-            des_joint_angles = inverse_kinematics.get_joint_angles(desired_pose, seed_cmd=start_joints,
-                                                                   use_advanced_options=True)
-        except ValueError:
-            rospy.logerr('no inverse kinematics solution found, '
-                         'going to reset robot...')
-            current_joints = self.ctrl.limb.joint_angles()
-            self.ctrl.limb.set_joint_positions(current_joints)
-            raise Traj_aborted_except('raising Traj_aborted_except')
+        # desired_pose = inverse_kinematics.get_pose_stamped(pos[0],
+        #                                                    pos[1],
+        #                                                    pos[2],
+        #                                                    inverse_kinematics.EXAMPLE_O)
+        # start_joints = self.ctrl.limb.joint_angles()
+        # try:
+        #     des_joint_angles = inverse_kinematics.get_joint_angles(desired_pose, seed_cmd=start_joints,
+        #                                                            use_advanced_options=True)
+        # except ValueError:
+        #     rospy.logerr('no inverse kinematics solution found, '
+        #                  'going to reset robot...')
+        #     current_joints = self.ctrl.limb.joint_angles()
+        #     self.ctrl.limb.set_joint_positions(current_joints)
+        #     raise Traj_aborted_except('raising Traj_aborted_except')
         try:
             if self.use_robot:
-                if self.use_imp_ctrl:
-                    self.imp_ctrl_release_spring(30)
-                    self.move_with_impedance_sec(des_joint_angles)
-                else:
-                    self.ctrl.limb.move_to_joint_positions(des_joint_angles)
+                self.ctrl.go_to_pose_goal(pos)
+                # if self.use_imp_ctrl:
+                #     self.imp_ctrl_release_spring(30)
+                #     self.move_with_impedance_sec(des_joint_angles)
+                # else:
+                #     self.ctrl.limb.move_to_joint_positions(des_joint_angles)
         except OSError:
             rospy.logerr('collision detected, stopping trajectory, going to reset robot...')
             rospy.sleep(.5)
             raise Traj_aborted_except('raising Traj_aborted_except')
-        if self.ctrl.limb.has_collided():
-            rospy.logerr('collision detected!!!')
-            rospy.sleep(.5)
-            raise Traj_aborted_except('raising Traj_aborted_except')
+        # if self.ctrl.limb.has_collided():
+        #     rospy.logerr('collision detected!!!')
+        #     rospy.sleep(.5)
+        #     raise Traj_aborted_except('raising Traj_aborted_except')
 
     def apply_act(self, action_vec, i_act, move=True):
         self.des_pos[:2] += action_vec[:2]
         self.des_pos = self.truncate_pos(self.des_pos)  # make sure not outside defined region
-        self.imp_ctrl_release_spring(120.)
+        # self.imp_ctrl_release_spring(120.)
 
-        close_cmd = action_vec[2]
-        if close_cmd != 0:
-            self.topen = i_act + close_cmd
-            self.ctrl.gripper.close()
-            self.gripper_closed = True
+        # close_cmd = action_vec[2]
+        # if close_cmd != 0:
+        #     self.topen = i_act + close_cmd
+        #     self.ctrl.gripper.close()
+            # self.gripper_closed = True
 
-        up_cmd = action_vec[3]
-        delta_up = .1
-        if up_cmd != 0:
-            self.t_down = i_act + up_cmd
-            self.des_pos[2] = self.lower_height + delta_up
-            self.gripper_up = True
+        # up_cmd = action_vec[3]
+        # delta_up = .1
+        # if up_cmd != 0:
+        #     self.t_down = i_act + up_cmd
+        #     self.des_pos[2] = self.lower_height + delta_up
+        #     self.gripper_up = True
 
-        if self.gripper_closed:
-            if i_act == self.topen:
-                self.ctrl.gripper.open()
-                print 'opening gripper'
-                self.gripper_closed = False
+        # if self.gripper_closed:
+        #     if i_act == self.topen:
+        #         self.ctrl.gripper.open()
+        #         print 'opening gripper'
+        #         self.gripper_closed = False
 
-        if self.gripper_up:
-            if i_act == self.t_down:
-                self.des_pos[2] = self.lower_height
-                print 'going down'
-                self.imp_ctrl_release_spring(30.)
-                self.gripper_up = False
+        # if self.gripper_up:
+        #     if i_act == self.t_down:
+        #         self.des_pos[2] = self.lower_height
+        #         print 'going down'
+        #         self.imp_ctrl_release_spring(30.)
+        #         self.gripper_up = False
 
         if move:
-            desired_pose = inverse_kinematics.get_pose_stamped(self.des_pos[0],
-                                                               self.des_pos[1],
-                                                               self.des_pos[2],
-                                                               inverse_kinematics.EXAMPLE_O)
-            start_joints = self.ctrl.limb.joint_angles()
-            try:
-                des_joint_angles = inverse_kinematics.get_joint_angles(desired_pose, seed_cmd=start_joints,
-                                                                       use_advanced_options=True)
-            except ValueError:
-                rospy.logerr('no inverse kinematics solution found, '
-                             'going to reset robot...')
-                current_joints = self.ctrl.limb.joint_angles()
-                self.ctrl.limb.set_joint_positions(current_joints)
-                raise Traj_aborted_except('raising Traj_aborted_except')
-
-            self.move_with_impedance(des_joint_angles)
+            # desired_pose = inverse_kinematics.get_pose_stamped(self.des_pos[0],
+            #                                                    self.des_pos[1],
+            #                                                    self.des_pos[2],
+            #                                                    inverse_kinematics.EXAMPLE_O)
+            # start_joints = self.ctrl.limb.joint_angles()
+            desired_pose = self.des_pos
+            # try:
+            #     des_joint_angles = inverse_kinematics.get_joint_angles(desired_pose, seed_cmd=start_joints,
+            #                                                            use_advanced_options=True)
+            # except ValueError:
+            #     rospy.logerr('no inverse kinematics solution found, '
+            #                  'going to reset robot...')
+            #     current_joints = self.ctrl.limb.joint_angles()
+            #     # self.ctrl.limb.set_joint_positions(current_joints)
+            #     raise Traj_aborted_except('raising Traj_aborted_except')
+            #
+            # self.move_with_impedance(des_joint_angles)
+            self.ctrl.go_to_pose_goal(self.des_pos)
 
         return self.des_pos
 
@@ -623,7 +625,7 @@ class Visual_MPC_Client():
         rospy.loginfo("Waypoint Playback Started")
 
         # Set joint position speed ratio for execution
-        self.ctrl.limb.set_joint_position_speed(.2)
+        # self.ctrl.limb.set_joint_position_speed(.2)
 
         # Loop until program is exited
         do_repeat = True
@@ -636,7 +638,7 @@ class Visual_MPC_Client():
                     break
                 try:
                     print 'going to waypoint ', i
-                    self.ctrl.limb.move_to_joint_positions(waypoint, timeout=5.0)
+                    # self.ctrl.limb.move_to_joint_positions(waypoint, timeout=5.0)
                 except:
                     do_repeat = True
                     break
