@@ -7,7 +7,8 @@ sys.path.append('/home/steven/Project/graduate_design/visual_mpc/python_visual_m
 # tf record data location:
 LSDC_BASE = '/'.join(str.split(current_dir, '/')[:-4])
 
-from setup_predictor_simple import setup_predictor
+# from setup_predictor_simple import setup_predictor
+from setup_predictor_towers import setup_predictor
 
 
 configuration = {
@@ -23,12 +24,12 @@ configuration = {
 'model': 'DNA',            #'model architecture to use - CDNA, DNA, or STP' ,
 'num_masks': 1,            # 'number of masks, usually 1 for DNA, 10 for CDNA, STN.' ,
 'schedsamp_k': -1,       # 'The k hyperparameter for scheduled sampling -1 for no scheduled sampling.' ,
-'batch_size':  800,           #batch size for evaluation' ,
+'batch_size':  64,           #batch size for evaluation' ,
 'learning_rate': 0,     #'the base learning rate of the generator' ,
 'visualize': '',            #'load model from which to generate visualizations
 'file_visual': '',          # datafile used for making visualizations,
 'kern_size': 9,              #size of DNA kerns
 'sawyer':'',
 'single_view':"",
-# 'ndesig':2
+'ndesig':2
 }

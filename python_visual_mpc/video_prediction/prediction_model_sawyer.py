@@ -43,6 +43,8 @@ class Prediction_Model(object):
 
         self.pix_distributions1 = pix_distributions1
         self.pix_distributions2 = pix_distributions2
+        print('pix_distributions1', pix_distributions1)
+        print('pix_distributions2', pix_distributions2)
         self.actions = actions
         self.iter_num = iter_num
         self.conf = conf

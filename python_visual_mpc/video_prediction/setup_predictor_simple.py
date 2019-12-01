@@ -19,7 +19,7 @@ def setup_predictor(conf, gpu_id = 0, ngpu=None):
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     print 'using CUDA_VISIBLE_DEVICES=', os.environ["CUDA_VISIBLE_DEVICES"]
 
-    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0)
     g_predictor = tf.Graph()
     sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, allow_soft_placement=True), graph= g_predictor)
     with sess.as_default():

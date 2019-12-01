@@ -26,4 +26,5 @@ policy = {
 
 agent = {
     'T': 15,
+    'store_video_prediction':''
 }

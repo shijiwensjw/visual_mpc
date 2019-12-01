@@ -350,6 +350,7 @@ class Visual_MPC_Client():
 
         while i_step < self.action_sequence_length:
 
+            # print('*'*20+'i_step: {}'.format(i_step)+'*'*20+'\n')
             self.curr_delta_time = rospy.get_time() - start_time
             if self.curr_delta_time > self.action_interval:
                 if 'manual_correction' in self.agentparams:
@@ -582,7 +583,7 @@ class Visual_MPC_Client():
             #                                                    self.des_pos[2],
             #                                                    inverse_kinematics.EXAMPLE_O)
             # start_joints = self.ctrl.limb.joint_angles()
-            desired_pose = self.des_pos
+            # desired_pose = self.des_pos
             # try:
             #     des_joint_angles = inverse_kinematics.get_joint_angles(desired_pose, seed_cmd=start_joints,
             #                                                            use_advanced_options=True)

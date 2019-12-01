@@ -173,9 +173,9 @@ class RobotController(object):
     def set_neutral(self):
         pose_goal = geometry_msgs.msg.Pose()
 
-        pose_goal.position.x = -0.35
-        pose_goal.position.y = 0.360
-        pose_goal.position.z = 0.125
+        pose_goal.position.x = -0.0
+        pose_goal.position.y = 0.6
+        pose_goal.position.z = 0.15
         pose_goal.orientation.w = 0.535960768954  #1.0
         pose_goal.orientation.x = -0.415964133446
         pose_goal.orientation.y = 0.352373748554

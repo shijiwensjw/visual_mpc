@@ -121,7 +121,7 @@ class CEM_controller():
 
 
         print '------------------------------------------------'
-        print 'starting CEM cylce'
+        print 'starting CEM cylce perform'
 
         for itr in range(self.niter):
             print '------------'
@@ -282,9 +282,9 @@ class CEM_controller():
         if self.verbose and itr == self.policyparams['iterations']-1:
             # print 'creating visuals for best sampled actions at last iteration...'
             if self.save_subdir != None:
-                file_path = self.netconf['current_dir']+ '/'+ self.save_subdir +'/verbose'
+                file_path = self.netconf['current_dir']+ self.save_subdir +'/verbose'
             else:
-                file_path = self.netconf['current_dir'] + '/verbose'
+                file_path = self.netconf['current_dir'] + 'verbose'
 
 
             if not os.path.exists(file_path):
@@ -339,6 +339,7 @@ class CEM_controller():
             scores = expected_distance
         return desig_pix_cost, scores
 
+    # get distance in 2D image. by s
     def get_distancegrid(self, goal_pix):
         distance_grid = np.empty((64, 64))
         for i in range(64):
