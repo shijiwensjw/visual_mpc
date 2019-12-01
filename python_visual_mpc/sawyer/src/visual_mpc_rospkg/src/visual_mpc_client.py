@@ -314,9 +314,9 @@ class Visual_MPC_Client():
 
             self.init_traj()
 
-            self.lower_height = 0.15
-            self.xlim = [-0.35, 0.23]  # min, max in cartesian X-direction
-            self.ylim = [0.36, 0.92]  # min, max in cartesian Y-direction
+            self.lower_height = 0.16
+            self.xlim = [-0.34, 0.34]  # min, max in cartesian X-direction
+            self.ylim = [0.40, 0.82]  # min, max in cartesian Y-direction
 
             random_start_pos = False
             if random_start_pos:
@@ -366,7 +366,7 @@ class Visual_MPC_Client():
                 action_vec = self.query_action()
                 print 'action vec', action_vec
 
-                self.des_pos = self.apply_act(action_vec, i_step, move=False)
+                self.des_pos = self.apply_act(action_vec, i_step, move=True)
                 start_time = rospy.get_time()
 
                 print 'prev_desired pos in step {0}: {1}'.format(i_step, self.previous_des_pos)

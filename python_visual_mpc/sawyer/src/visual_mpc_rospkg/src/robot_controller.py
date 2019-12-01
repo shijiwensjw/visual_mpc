@@ -164,7 +164,7 @@ class RobotController(object):
         group.clear_pose_targets()
 
         current_pose = group.get_current_pose().pose
-        print("New current pose: ", current_pose)
+        print("New current pose: ", current_pose.position)
 
         # current_pose = self.group.get_current_pose().pose
         # return all_close(pose_goal, current_pose, 0.01)
