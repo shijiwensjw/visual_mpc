@@ -1,3 +1,13 @@
+# Train model command
+
+`cd ~/Project/graduate_design/visual_mpc/python_visual_mpc/video_prediction`
+
+`python prediction_train_sjw.py --hyper ../../tensorflow_data/sawyer/dna_correct_nummask_test/conf.py`
+
+
+
+
+
 ## Information for Simulation Setup:
 
 

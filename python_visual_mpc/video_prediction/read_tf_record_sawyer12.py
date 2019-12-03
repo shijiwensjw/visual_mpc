@@ -13,7 +13,10 @@ import cPickle
 
 # Dimension of the state and action.
 STATE_DIM = 3
-ACION_DIM = 4
+ACION_DIM = 3
+
+# STATE_DIM = 7
+# ACION_DIM = 7
 
 def build_tfrecord_input(conf, training=True):
     """Create input tfrecord tensors.
@@ -58,10 +61,10 @@ def build_tfrecord_input(conf, training=True):
 
     for i in load_indx:
         if 'single_view' not in conf:
-            image_main_name = str(i) + '/image_main/encoded'
-        image_aux1_name = str(i) + '/image_aux1/encoded'
-        action_name = str(i) + '/action'
-        endeffector_pos_name = str(i) + '/endeffector_pos'
+            image_main_name = str(i) + '/env/image_view0/encoded'
+        image_aux1_name = str(i) + '/env/image_view0/encoded'
+        action_name = str(i) + '/env/state'
+        endeffector_pos_name = str(i) + '/env/state'
         # state_name = 'move/' +str(i) + '/state'
 
         if 'canon_ex' in conf:
@@ -71,8 +74,8 @@ def build_tfrecord_input(conf, training=True):
         features = {
 
                     image_aux1_name: tf.FixedLenFeature([1], tf.string),
-                    action_name: tf.FixedLenFeature([ACION_DIM], tf.float32),
-                    endeffector_pos_name: tf.FixedLenFeature([STATE_DIM], tf.float32),
+                    action_name: tf.FixedLenFeature([7], tf.float32),
+                    endeffector_pos_name: tf.FixedLenFeature([7], tf.float32),
         }
         if 'single_view' not in conf:
             (features[image_main_name]) = tf.FixedLenFeature([1], tf.string)
@@ -134,9 +137,11 @@ def build_tfrecord_input(conf, training=True):
             init_pix_pos = tf.reshape(features[init_pix_pos_name], shape=[1, 2])
             init_pix_pos_seq.append(init_pix_pos)
 
-        endeffector_pos = tf.reshape(features[endeffector_pos_name], shape=[1, STATE_DIM])
+        endeffector_pos = tf.reshape(features[endeffector_pos_name][:3], shape=[1, STATE_DIM])
         endeffector_pos_seq.append(endeffector_pos)
-        action = tf.reshape(features[action_name], shape=[1, ACION_DIM])
+        shp = np.shape(features[action_name])
+        print('shape: ',shp, features[action_name])
+        action = tf.reshape(features[action_name][:3], shape=[1, ACION_DIM])
         action_seq.append(action)
 
     if 'single_view' not in conf:
