@@ -179,6 +179,8 @@ class Prediction_Model(object):
                 if not 'ignore_state_action' in self.conf:
                     state_action = tf.concat(axis=1, values=[action, current_state])
 
+                # The below is the structure defination of the net
+
                 enc0 = slim.layers.conv2d(    #32x32x32
                     input_image,
                     32, [5, 5],
@@ -259,6 +261,7 @@ class Prediction_Model(object):
                         prev_pix_distrib1 = tf.expand_dims(prev_pix_distrib1, -1)
                     print 'transform from image 1'
 
+                print('//////////////////')
                 if self.conf['model']=='DNA':
                     # Using largest hidden state for predicting untied conv kernels.
                     trafo_input = slim.layers.conv2d_transpose(

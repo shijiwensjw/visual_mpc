@@ -58,8 +58,11 @@ def setup_predictor(conf, gpu_id=0, ngpu=1):
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9)
 
     # Make training session.
+    # sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options,
+    #                                                    allow_soft_placement=True,
+    #                                                    log_device_placement=False))
+
     sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options,
-                                                       allow_soft_placement=True,
                                                        log_device_placement=False))
 
     print '-------------------------------------------------------------------'
@@ -107,10 +110,11 @@ def setup_predictor(conf, gpu_id=0, ngpu=1):
     vars = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
     # remove all states from group of variables which shall be saved and restored:
     vars_no_state = filter_vars(vars)
-    # saver = tf.train.Saver(vars_no_state, max_to_keep=0)
+    # vars_no_state = vars
+    saver = tf.train.Saver(vars_no_state, max_to_keep=0)
 
     print('conf pretrained_model: ', conf['pretrained_model'])
-    saver = tf.train.import_meta_graph(conf['pretrained_model']+'.meta')
+    # saver = tf.train.import_meta_graph(conf['pretrained_model']+'.meta')
     saver.restore(sess, conf['pretrained_model'])
     print 'restore done. '
 
