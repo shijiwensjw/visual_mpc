@@ -304,8 +304,8 @@ def create_video_pixdistrib_gif(file_path, conf, t=0, suffix = "", n_exp = 8, su
 
     # trafos = cPickle.load(open(file_path + '/trafos.pkl'.format(t), "rb"))
 
-    # makecolor = True
-    makecolor = False
+    makecolor = True
+    # makecolor = False
 
     if 'ndesig' in conf:
         if makecolor:
@@ -349,11 +349,17 @@ if __name__ == '__main__':
     # splitted = str.split(os.path.dirname(__file__), '/')
     # file_path = '/'.join(splitted[:-3] + ['tensorflow_data/skip_frame/use_every4'])
     # file_path = '/home/frederik/Documents/lsdc/tensorflow_data/skip_frame/use_every_4'
+    # Create gif from pkl files
+    file_path = '/home/steven/Project/graduate_design/visual_mpc/experiments/cem_exp/benchmarks_sawyer/dna_test/exp3/verbose'
 
-    file_path = '/home/frederik/Documents/lsdc/tensorflow_data/costmasks/cmask/modeldata'
-    hyperparams = imp.load_source('hyperparams', '/home/frederik/Documents/lsdc/tensorflow_data/costmasks/cmask/conf.py' )
-    conf = hyperparams.configuration
-    conf['visualize'] = conf['output_dir'] + '/model42002'
-    pred = comp_video(file_path, conf)
-
+    # hyperparams = imp.load_source('hyperparams', '/home/frederik/Documents/lsdc/tensorflow_data/costmasks/cmask/conf.py' )
+    # conf = hyperparams.configuration
+    # conf['visualize'] = conf['output_dir'] + '/model42002'
+    # pred = comp_video(file_path, conf)
+    hyperparams = imp.load_source('hyperparams', '/home/steven/Project/graduate_design/visual_mpc/experiments/cem_exp/benchmarks_sawyer/dna_test/conf.py')
+    netconf = hyperparams.configuration
+    itr = 10
+    for i in range(1,14):
+        create_video_pixdistrib_gif(file_path, netconf, t=i, n_exp=10, suppress_number=True, suffix='iter{}_t{}'.format(itr, i))
     # comp_pix_distrib(conf['output_dir'])
+    print("\nCompleted!")

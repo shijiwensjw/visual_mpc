@@ -125,7 +125,7 @@ class CEM_controller():
 
         for itr in range(self.niter):
             print '------------'
-            print 'iteration: ', itr
+            print '    iteration: ', itr
             t_startiter = datetime.now()
 
             actions = np.random.multivariate_normal(self.mean, self.sigma, self.M)
@@ -147,7 +147,7 @@ class CEM_controller():
             else:
                 scores = self.video_pred(last_frames, last_states, actions, itr)
 
-            print 'overall time for evaluating actions {}'.format(
+            print '    overall time for evaluating actions {}'.format(
                 (datetime.now() - t_start).seconds + (datetime.now() - t_start).microseconds / 1e6)
 
             actioncosts = self.calc_action_cost(actions)
@@ -169,10 +169,10 @@ class CEM_controller():
             self.sigma = np.cov(arr_best_actions, rowvar= False, bias= False)
             self.mean = np.mean(arr_best_actions, axis= 0)
 
-            print 'iter {0}, bestscore {1}'.format(itr, scores[self.indices[0]])
-            print 'action cost of best action: ', actioncosts[self.indices[0]]
+            print '    iter {0}, bestscore {1}'.format(itr, scores[self.indices[0]])
+            print '    action cost of best action: ', actioncosts[self.indices[0]]
 
-            print 'overall time for iteration {}'.format(
+            print '    overall time for iteration {}'.format(
                 (datetime.now() - t_startiter).seconds + (datetime.now() - t_startiter).microseconds / 1e6)
 
     def switch_on_pix(self, desig):
@@ -236,13 +236,13 @@ class CEM_controller():
             distance_grid2 = self.get_distancegrid(self.goal_pix[1])
 
             _, scores1 = self.calc_scores(gen_distrib1, distance_grid1)
-            print 'best score1', np.min(scores1)
+            print '    best score1', np.min(scores1)
             _, scores2 = self.calc_scores(gen_distrib2, distance_grid2)
-            print 'best score2', np.min(scores2)
+            print '    best score2', np.min(scores2)
             scores = scores1 + scores2
 
-            print 'scores1 of best traj: ', scores1[scores.argsort()[0]]
-            print 'scores2 of best traj: ', scores2[scores.argsort()[0]]
+            print '    scores1 of best traj: ', scores1[scores.argsort()[0]]
+            print '    scores2 of best traj: ', scores2[scores.argsort()[0]]
 
         else:
             input_distrib = self.make_input_distrib(itr)
@@ -309,7 +309,7 @@ class CEM_controller():
             else:
                 cPickle.dump(best(gen_distrib), open(file_path + '/gen_distrib_t{}.pkl'.format(self.t), 'wb'))
 
-            print 'written files to:' + file_path
+            print '    written files to:' + file_path
             if not 'no_instant_gif' in self.policyparams:
                 create_video_pixdistrib_gif(file_path, self.netconf, t=self.t, n_exp=10,
                                             suppress_number=True, suffix='iter{}_t{}'.format(itr, self.t))

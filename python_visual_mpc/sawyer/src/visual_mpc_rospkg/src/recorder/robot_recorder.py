@@ -88,7 +88,7 @@ class RobotRecorder(object):
         # prefix = self.instance_type
         try:
             rospy.Subscriber("/camera/color/image_raw", Image_msg, self.store_latest_im)
-            rospy.Subscriber("/camera/depth/image_rect_raw", Image_msg, self.store_latest_d_im)
+            # rospy.Subscriber("/camera/depth/image_rect_raw", Image_msg, self.store_latest_d_im)
         except:
             print('Can not subscribe image topics')
         self.save_dir = save_dir
@@ -194,13 +194,14 @@ class RobotRecorder(object):
         self.ltob.img_cropped = self.crop_lowres(cv_image)
 
     def crop_highres(self, cv_image):
-        startcol = 180
-        startrow = 0
-        endcol = startcol + 1500
-        endrow = startrow + 1500
-        cv_image = copy.deepcopy(cv_image[startrow:endrow, startcol:endcol])
+        # startcol = 180
+        # startrow = 0
+        # endcol = startcol + 1500
+        # endrow = startrow + 1500
+        # cv_image = copy.deepcopy(cv_image[startrow:endrow, startcol:endcol])
+        cv_image = copy.deepcopy(cv_image)
 
-        cv_image = cv2.resize(cv_image, (0, 0), fx=.75, fy=.75, interpolation=cv2.INTER_AREA)
+        # cv_image = cv2.resize(cv_image, (0, 0), fx=.75, fy=.75, interpolation=cv2.INTER_AREA)
         if self.instance_type == 'main':
             cv_image = imutils.rotate_bound(cv_image, 180)
         return cv_image

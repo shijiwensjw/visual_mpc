@@ -315,8 +315,8 @@ class Visual_MPC_Client():
             self.init_traj()
 
             self.lower_height = 0.18
-            self.xlim = [-0.34, 0.34]  # min, max in cartesian X-direction
-            self.ylim = [0.40, 0.82]  # min, max in cartesian Y-direction
+            self.xlim = [-0.30, 0.30]  # min, max in cartesian X-direction
+            self.ylim = [0.45, 0.80]  # min, max in cartesian Y-direction
 
             random_start_pos = False
             if random_start_pos:
@@ -549,52 +549,8 @@ class Visual_MPC_Client():
     def apply_act(self, action_vec, i_act, move=True):
         self.des_pos[:2] += action_vec[:2]
         self.des_pos = self.truncate_pos(self.des_pos)  # make sure not outside defined region
-        # self.imp_ctrl_release_spring(120.)
-
-        # close_cmd = action_vec[2]
-        # if close_cmd != 0:
-        #     self.topen = i_act + close_cmd
-        #     self.ctrl.gripper.close()
-            # self.gripper_closed = True
-
-        # up_cmd = action_vec[3]
-        # delta_up = .1
-        # if up_cmd != 0:
-        #     self.t_down = i_act + up_cmd
-        #     self.des_pos[2] = self.lower_height + delta_up
-        #     self.gripper_up = True
-
-        # if self.gripper_closed:
-        #     if i_act == self.topen:
-        #         self.ctrl.gripper.open()
-        #         print 'opening gripper'
-        #         self.gripper_closed = False
-
-        # if self.gripper_up:
-        #     if i_act == self.t_down:
-        #         self.des_pos[2] = self.lower_height
-        #         print 'going down'
-        #         self.imp_ctrl_release_spring(30.)
-        #         self.gripper_up = False
 
         if move:
-            # desired_pose = inverse_kinematics.get_pose_stamped(self.des_pos[0],
-            #                                                    self.des_pos[1],
-            #                                                    self.des_pos[2],
-            #                                                    inverse_kinematics.EXAMPLE_O)
-            # start_joints = self.ctrl.limb.joint_angles()
-            # desired_pose = self.des_pos
-            # try:
-            #     des_joint_angles = inverse_kinematics.get_joint_angles(desired_pose, seed_cmd=start_joints,
-            #                                                            use_advanced_options=True)
-            # except ValueError:
-            #     rospy.logerr('no inverse kinematics solution found, '
-            #                  'going to reset robot...')
-            #     current_joints = self.ctrl.limb.joint_angles()
-            #     # self.ctrl.limb.set_joint_positions(current_joints)
-            #     raise Traj_aborted_except('raising Traj_aborted_except')
-            #
-            # self.move_with_impedance(des_joint_angles)
             self.ctrl.go_to_pose_goal(self.des_pos)
 
         return self.des_pos

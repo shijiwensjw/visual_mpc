@@ -16,7 +16,7 @@ configuration = {
 'setup_predictor': setup_predictor,
 'current_dir': current_dir, #'directory for writing gifs' ,
 # 'filepath of a pretrained model to use for cem
-'pretrained_model': LSDC_BASE +'/tensorflow_data/sawyer/dna_correct_nummask_test/modeldata_adim4/model2',
+'pretrained_model': LSDC_BASE +'/tensorflow_data/sawyer/dna_correct_nummask_test/model_test/model4002',
 # 'pretrained_model': LSDC_BASE +'/tensorflow_data/sawyer/singleview_shifted/modeldata/model114002',
 'sequence_length': 15,      # 'sequence length, including context frames.' ,
 'context_frames': 2,        # of frames before predictions.' ,
@@ -24,7 +24,7 @@ configuration = {
 'model': 'DNA',            #'model architecture to use - CDNA, DNA, or STP' ,
 'num_masks': 1,            # 'number of masks, usually 1 for DNA, 10 for CDNA, STN.' ,
 'schedsamp_k': -1,       # 'The k hyperparameter for scheduled sampling -1 for no scheduled sampling.' ,
-'batch_size':  64,           #batch size for evaluation' ,
+'batch_size':  128,           #batch size for evaluation' ,
 'learning_rate': 0,     #'the base learning rate of the generator' ,
 'visualize': '',            #'load model from which to generate visualizations
 'file_visual': '',          # datafile used for making visualizations,

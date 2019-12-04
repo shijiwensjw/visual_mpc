@@ -144,10 +144,10 @@ class RobotController(object):
 
         pose_goal = geometry_msgs.msg.Pose()
 
-        pose_goal.orientation.w = 0.535960768954  #1.0
-        pose_goal.orientation.x = -0.415964133446
-        pose_goal.orientation.y = 0.352373748554
-        pose_goal.orientation.z = 0.644633721705
+        pose_goal.orientation.w = 0.324659198177  #1.0
+        pose_goal.orientation.x = -0.619674898545
+        pose_goal.orientation.y = -0.00554696893347
+        pose_goal.orientation.z = 0.714540870971
 
         pose_goal.position.x = goal_pose[0]
         pose_goal.position.y = goal_pose[1]
@@ -176,10 +176,15 @@ class RobotController(object):
         pose_goal.position.x = -0.0
         pose_goal.position.y = 0.6
         pose_goal.position.z = 0.15
-        pose_goal.orientation.w = 0.535960768954  #1.0
-        pose_goal.orientation.x = -0.415964133446
-        pose_goal.orientation.y = 0.352373748554
-        pose_goal.orientation.z = 0.644633721705
+
+        pose_goal.orientation.w = 0.324659198177  #1.0
+        pose_goal.orientation.x = -0.619674898545
+        pose_goal.orientation.y = -0.00554696893347
+        pose_goal.orientation.z = 0.714540870971
+        # pose_goal.orientation.w = 0.535960768954  #1.0
+        # pose_goal.orientation.x = -0.415964133446
+        # pose_goal.orientation.y = 0.352373748554
+        # pose_goal.orientation.z = 0.644633721705
 
         self.group.set_pose_target(pose_goal)
         plan = self.group.go(wait=True)
