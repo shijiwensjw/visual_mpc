@@ -6,6 +6,8 @@ import os
 import imp
 from PIL import Image
 import re
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pdb
 
@@ -253,6 +255,95 @@ def comp_masks(file_path, conf, pred = None, suffix = None):
     else: name = file_path + '/masks_' + conf['experiment_name'] + '_' + str(itr_vis) + suffix
     npy_to_gif(mask_list, name)
 
+def plot_psum_overtime(conf, gen_distrib, n_exp, name, filepath):
+    plt.figure(figsize=(25, 2),dpi=80)
+
+    if 'avoid_occlusions' in conf:
+        occlusioncost = cPickle.load(open(filepath + '/occulsioncost_bestactions.pkl','rb'))
+
+    for ex in range(n_exp):
+        psum = []
+        ax = plt.subplot(1,n_exp, ex+1)
+        for t in range(len(gen_distrib)):
+            psum.append(np.sum(gen_distrib[t][ex]))
+        psum = np.array(psum)
+
+        if 'avoid_occlusions' in conf:
+            ax.set_title("occlusioncost: {}".format(occlusioncost[ex]))
+
+        plt.plot(range(len(gen_distrib)), psum)
+        plt.ylim([0,2.5])
+
+    # plt.show()
+    plt.savefig(name +"_psum.png")
+    plt.close('all')
+
+def create_video_pixdistrib_gif(file_path, conf, t=0, suffix = "", n_exp = 8, suppress_number = False,
+                                append_masks = False, show_moved= False, makegif = True):
+    gen_images = cPickle.load(open(file_path + '/gen_image_t{}.pkl'.format(t), "rb"))
+
+
+    if  suppress_number:
+        name = file_path + '/vid_' + conf['experiment_name'] + '_' + suffix
+    else:
+        itr_vis = re.match('.*?([0-9]+)$', conf['visualize']).group(1)
+        if not suffix:
+            name = file_path + '/vid_' + conf['experiment_name'] + '_' + str(itr_vis)
+        else:
+            name = file_path + '/vid_' + conf['experiment_name'] + '_' + str(itr_vis) + suffix
+
+    if 'ndesig' in conf:
+        gen_distrib1 = cPickle.load(open(file_path + '/gen_distrib1_t{}.pkl'.format(t), "rb"))
+        gen_distrib2 = cPickle.load(open(file_path + '/gen_distrib2_t{}.pkl'.format(t), "rb"))
+
+        plot_psum_overtime(conf, gen_distrib1, n_exp, name+'_1', file_path)
+        plot_psum_overtime(conf, gen_distrib2, n_exp, name+'_2', file_path)
+    else:
+        gen_distrib = cPickle.load(open(file_path + '/gen_distrib_t{}.pkl'.format(t), "rb"))
+        plot_psum_overtime(conf, gen_distrib, n_exp, name, file_path)
+
+    # trafos = cPickle.load(open(file_path + '/trafos.pkl'.format(t), "rb"))
+
+    # makecolor = True
+    makecolor = False
+
+    if 'ndesig' in conf:
+        if makecolor:
+            gen_distrib1 = make_color_scheme(gen_distrib1)
+            gen_distrib2 = make_color_scheme(gen_distrib2)
+        else:
+            gen_distrib1 = [np.repeat(g, 3, axis=3) for g in gen_distrib1]
+            gen_distrib2 = [np.repeat(g, 3, axis=3) for g in gen_distrib2]
+
+        video_list = [gen_images, gen_distrib1, gen_distrib2]
+    else:
+        if makecolor:
+            gen_distrib = make_color_scheme(gen_distrib)
+        else:
+            gen_distrib = [np.repeat(g, 3, axis=3) for g in gen_distrib]
+
+        video_list = [gen_images, gen_distrib]
+    if append_masks:
+        list_of_maskvideos = get_masks(conf, file_path, repeat_last_dim=True)
+        # list_of_maskvideos = [make_color_scheme(v) for v in list_of_maskvideos]
+        video_list += list_of_maskvideos
+
+    if show_moved:
+        moved_im = cPickle.load(open(file_path + '/moved_im.pkl', "rb"))
+        moved_pix = cPickle.load(open(file_path + '/moved_pix.pkl', "rb"))
+        moved_im = convert_to_videolist(moved_im, repeat_last_dim=False)
+        moved_pix = convert_to_videolist(moved_pix, repeat_last_dim=True)
+
+        video_list += moved_im
+        video_list += moved_pix
+
+    fused_gif = assemble_gif(video_list, n_exp)
+
+    if makegif:
+        npy_to_gif(fused_gif, name)
+    else:
+        return fused_gif
+
 if __name__ == '__main__':
 
     # splitted = str.split(os.path.dirname(__file__), '/')
@@ -266,4 +357,3 @@ if __name__ == '__main__':
     pred = comp_video(file_path, conf)
 
     # comp_pix_distrib(conf['output_dir'])
-

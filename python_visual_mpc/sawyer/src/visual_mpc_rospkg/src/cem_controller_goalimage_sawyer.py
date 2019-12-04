@@ -286,7 +286,6 @@ class CEM_controller():
             else:
                 file_path = self.netconf['current_dir'] + 'verbose'
 
-
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
 
@@ -297,12 +296,16 @@ class CEM_controller():
                         outputlist[tstep][ind] = inputlist[tstep][bestindices[ind]]
                 return outputlist
 
-
+            # file_path_gif = '/'.join(str.split(file_path, '/')[:-1])+'/'
             cPickle.dump(best(gen_images), open(file_path + '/gen_image_t{}.pkl'.format(self.t), 'wb'))
+            # npy_to_gif(best(gen_images), file_path +'/output_gif/', 'gen_image_t{}.gif'.format(self.t))
 
             if 'ndesig' in self.policyparams:
                 cPickle.dump(best(gen_distrib1), open(file_path + '/gen_distrib1_t{}.pkl'.format(self.t), 'wb'))
+                # npy_to_gif(best(gen_distrib1), file_path_gif, +'/output_gif/'+'gen_distrib1_t{}.gif'.format(self.t))
+
                 cPickle.dump(best(gen_distrib2), open(file_path + '/gen_distrib2_t{}.pkl'.format(self.t), 'wb'))
+                # npy_to_gif(best(gen_distrib2), file_path_gif+'/output_gif/'+'gen_distrib2_t{}.gif'.format(self.t))
             else:
                 cPickle.dump(best(gen_distrib), open(file_path + '/gen_distrib_t{}.pkl'.format(self.t), 'wb'))
 

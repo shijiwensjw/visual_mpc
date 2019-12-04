@@ -314,7 +314,7 @@ class Visual_MPC_Client():
 
             self.init_traj()
 
-            self.lower_height = 0.16
+            self.lower_height = 0.18
             self.xlim = [-0.34, 0.34]  # min, max in cartesian X-direction
             self.ylim = [0.40, 0.82]  # min, max in cartesian Y-direction
 
