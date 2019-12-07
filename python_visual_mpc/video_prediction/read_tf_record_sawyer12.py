@@ -141,7 +141,8 @@ def build_tfrecord_input(conf, training=True):
         endeffector_pos_seq.append(endeffector_pos)
         shp = np.shape(features[action_name])
         print('shape: ',shp, features[action_name])
-        action = tf.reshape(features[action_name][:4], shape=[1, ACION_DIM])
+        # action = tf.reshape(features[action_name][:4], shape=[1, ACION_DIM])
+        action = tf.reshape(tf.concat([features[action_name][:3], tf.constant([0.])], 0), shape=[1, ACION_DIM])
         action_seq.append(action)
 
     if 'single_view' not in conf:
